@@ -1,0 +1,62 @@
+
+chest_tileset.png
+size: 64,128
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+chest02_96x32_sheet
+  rotate: false
+  xy: 0, 16
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
+chest03_96x32_sheet
+  rotate: false
+  xy: 0, 0
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
+chest04_96x32_sheet
+  rotate: false
+  xy: 0, 112
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
+chest05_96x32_sheet
+  rotate: false
+  xy: 0, 96
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
+chest06_96x32_sheet
+  rotate: false
+  xy: 0, 80
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
+chest07_96x32_sheet
+  rotate: false
+  xy: 0, 64
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
+chest08_96x32_sheet
+  rotate: false
+  xy: 0, 48
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
+chest10_96x32_sheet
+  rotate: false
+  xy: 0, 32
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
