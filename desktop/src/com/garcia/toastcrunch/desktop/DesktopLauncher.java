@@ -9,7 +9,6 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
 		config.title = "Slash and Dash";
-		config.useGL30 = true;
 		config.width = 1440;
 		config.height = 720;
 		new LwjglApplication(new ToastCrunchGame(), config);

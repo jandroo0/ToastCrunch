@@ -63,8 +63,8 @@ public class Player extends Sprite {
 
         // attacking
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.W))
-            if(attackCombo > )
+//        if(Gdx.input.isKeyJustPressed(Input.Keys.W))
+//            if(attackCombo > )
 
         // up
         if (Gdx.input.isKeyJustPressed(Input.Keys.W))
