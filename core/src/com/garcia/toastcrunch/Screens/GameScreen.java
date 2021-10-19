@@ -131,8 +131,8 @@ public class GameScreen implements Screen {
 
         game.batch.begin();
 
-        for(Enemy enemy : creator.getEnemies()) enemy.draw(game.batch);
         for(Item item : creator.getItems()) item.draw(game.batch);
+        for(Enemy enemy : creator.getEnemies()) enemy.draw(game.batch);
 
         player.draw(game.batch);
 

@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Array;
 import com.garcia.toastcrunch.Objects.Chest;
 import com.garcia.toastcrunch.Objects.Enemies.Enemy;
 import com.garcia.toastcrunch.Objects.Enemies.Goblin;
+import com.garcia.toastcrunch.Objects.Enemies.Worm;
 import com.garcia.toastcrunch.Objects.InteractiveTileObject;
 import com.garcia.toastcrunch.Objects.Item;
 import com.garcia.toastcrunch.Screens.GameScreen;
@@ -24,6 +25,7 @@ public class B2WorldCreator {
 
     private Array<Chest> chests;
     private Array<Goblin> goblins;
+    private Array<Worm> worms;
 
     public B2WorldCreator(GameScreen screen) {
 
@@ -37,6 +39,7 @@ public class B2WorldCreator {
 
         chests = new Array<Chest>();
         goblins = new Array<Goblin>();
+        worms = new Array<Worm>();
 
         // create ground fixtures
         for (MapObject object : map.getLayers().get(1).getObjects().getByType(RectangleMapObject.class)) {
@@ -75,8 +78,14 @@ public class B2WorldCreator {
             goblins.add(new Goblin(screen, rect.getX() / Constants.PPM, rect.getY() / Constants.PPM));
         }
 
-        // chest object
+        // worm enemy
         for(MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect =  ((RectangleMapObject) object).getRectangle();
+            worms.add(new Worm(screen, rect.getX() / Constants.PPM, rect.getY() / Constants.PPM));
+        }
+
+        // chest object
+        for(MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect =  ((RectangleMapObject) object).getRectangle();
             chests.add(new Chest(screen, rect.getX() / Constants.PPM, rect.getY() / Constants.PPM));
         }
@@ -92,6 +101,7 @@ public class B2WorldCreator {
     public Array<Enemy> getEnemies() {
         Array<Enemy> enemies = new Array<Enemy>();
         enemies.addAll(goblins);
+        enemies.addAll(worms);
         return enemies;
     }
 

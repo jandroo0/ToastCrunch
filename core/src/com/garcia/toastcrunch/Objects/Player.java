@@ -29,7 +29,8 @@ public class Player extends Sprite {
     private Assets.PlayerAsset playerAsset;
 
     private boolean runningRight;
-    private int jumpCounter, maxJumps, attackCombo;
+    private int jumpCounter, maxJumps, attackCombo, attackCounter;
+    private float timeSinceLastAttack, attackCooldown;
 
     public Player(GameScreen screen, float x, float y) {
         this.world = screen.getWorld();
@@ -47,15 +48,36 @@ public class Player extends Sprite {
 
         runningRight = true;
         maxJumps = 2;
-        attackCombo = 2;
+        jumpCounter = 1;
+        attackCounter = 1;
+        attackCombo = 3;
+        timeSinceLastAttack = 0;
+        attackCooldown = 2f;
 
         definePlayer(x, y);
-        setBounds(0, 0, 64 / Constants.PPM, 64 / Constants.PPM);
+        setBounds(0, 0, 48 / Constants.PPM, 36 / Constants.PPM);
 
+    }
+
+    public void update(float deltaTime) {
+        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 3);
+        setRegion(getFrame(deltaTime));
+        timeSinceLastAttack += deltaTime;
     }
 
     public void hit(Enemy enemy) {
         enemy.reverseVelocity(true, false);
+    }
+
+    public void attack(float deltaTime) {
+        if(timeSinceLastAttack - attackCooldown >= 0) {
+            b2body.setLinearVelocity(0, b2body.getLinearVelocity().y); // stop motion
+            if (attackCounter >= attackCombo) {
+                attackCounter = 1;
+            } else {
+                attackCounter++;
+            }
+        }
     }
 
     // player input
@@ -63,11 +85,9 @@ public class Player extends Sprite {
 
         // attacking
 
-//        if(Gdx.input.isKeyJustPressed(Input.Keys.W))
-//            if(attackCombo > )
-
-        // up
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W))
+        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            attack(deltaTime);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.W) && currentState != State.ATTACKING) { // jump
             if (jumpCounter < maxJumps) {
                 if (currentState != State.FALLING) {
                     b2body.applyLinearImpulse(new Vector2(0, jumpAccel), b2body.getWorldCenter(), true);
@@ -75,53 +95,80 @@ public class Player extends Sprite {
                     jumpCounter++;
                 }
             }
-//         right
-        if (Gdx.input.isKeyPressed(Input.Keys.D) && b2body.getLinearVelocity().x <= maxSpeed)
+        } else if (Gdx.input.isKeyPressed(Input.Keys.D) && b2body.getLinearVelocity().x <= maxSpeed && currentState != State.ATTACKING) { // right
             b2body.applyLinearImpulse(new Vector2(accel, 0), b2body.getWorldCenter(), true);
-
-        // left
-        if (Gdx.input.isKeyPressed(Input.Keys.A) && b2body.getLinearVelocity().x >= -maxSpeed)
+        } else if (Gdx.input.isKeyPressed(Input.Keys.A) && b2body.getLinearVelocity().x >= -maxSpeed && currentState != State.ATTACKING) { // left
             b2body.applyLinearImpulse(new Vector2(-accel, 0), b2body.getWorldCenter(), true);
+        } else if(Gdx.input.isKeyPressed(Input.Keys.D) == Gdx.input.isKeyPressed(Input.Keys.A)) {
+            b2body.setLinearVelocity(0, b2body.getLinearVelocity().y);
+        }
 
     }
 
-    public void update(float deltaTime) {
-        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
-        setRegion(getFrame(deltaTime));
+    public State getState() {
+
+        if(timeSinceLastAttack - attackCooldown >= 0) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) return State.ATTACKING;
+        }
+
+        if ((b2body.getLinearVelocity().y > 0 && currentState == State.JUMPING)) // if going up as well as falling after a jump
+            return State.JUMPING;
+        else if (b2body.getLinearVelocity().y < 0)
+            return State.FALLING;
+        else if (b2body.getLinearVelocity().x != 0) {
+            jumpCounter = 0;
+            return State.WALKING;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT))
+            return State.DUCKING;
+        else
+            jumpCounter = 0;
+        return State.IDLING;
     }
+
+    private enum State {WALKING, DUCKING, FALLING, HANGING, CLIMBING, IDLING, HOLDING, HURT, STANDING, KICKING, ATTACKING, JUMPING}
 
     public TextureRegion getFrame(float deltaTime) {
         currentState = getState();
 
-        TextureRegion region = playerAsset.playerIdle.getKeyFrame(stateTimer, false);
+        TextureRegion region = playerAsset.playerIdle01.getKeyFrame(stateTimer, false);
 
         switch (currentState) {
             case JUMPING:
-                region = playerAsset.playerJump.getKeyFrame(stateTimer, false);
+                switch(jumpCounter) {
+                    case 1:
+                        region = playerAsset.playerJump01.getKeyFrame(stateTimer, false);;
+                        break;
+                    case 2:
+                        region = playerAsset.playerJump02.getKeyFrame(stateTimer, false);
+                        break;
+                }
+
                 break;
             case FALLING:
-                region = playerAsset.playerFall.getKeyFrame(stateTimer, true);
-                System.out.println("asd");
+                region = playerAsset.playerFall.getKeyFrame(stateTimer, false);
                 break;
             case ATTACKING:
-                switch(attackCombo) {
+                switch(attackCounter) {
                     case 1:
                         region = playerAsset.playerAttack1.getKeyFrame(stateTimer, false);
                         break;
                     case 2:
                         region = playerAsset.playerAttack2.getKeyFrame(stateTimer, false);
                         break;
+                    case 3:
+                        region = playerAsset.playerAttack3.getKeyFrame(stateTimer, false);
+                        break;
                 }
                 break;
-//            case DUCKING:
-//                region = playerAsset.playerDuck;
-//                break;
             case WALKING:
                 region = playerAsset.playerWalk.getKeyFrame(stateTimer, true);
                 break;
+            case DUCKING:
+                region = playerAsset.playerDuck.getKeyFrame(stateTimer, false);
+                break;
             case IDLING:
             default:
-                region = playerAsset.playerIdle.getKeyFrame(stateTimer, true);
+                region = playerAsset.playerIdle01.getKeyFrame(stateTimer, true);
                 break;
         }
 
@@ -160,22 +207,5 @@ public class Player extends Sprite {
         shape.dispose();
     }
 
-    public State getState() {
-        if ((b2body.getLinearVelocity().y > 0 && currentState == State.JUMPING) || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) // if going up as well as falling after a jump
-            return State.JUMPING;
-        else if (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)
-            return State.FALLING;
-        else if (b2body.getLinearVelocity().x != 0) {
-            jumpCounter = 0;
-            return State.WALKING;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            return State.ATTACKING;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.S))
-            return State.DUCKING;
-        else
-            jumpCounter = 0;
-        return State.IDLING;
-    }
 
-    private enum State {WALKING, DUCKING, FALLING, HANGING, CLIMBING, IDLING, HOLDING, HURT, STANDING, KICKING, ATTACKING, JUMPING}
 }

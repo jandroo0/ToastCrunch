@@ -1,6 +1,7 @@
 package com.garcia.toastcrunch.Objects.Enemies;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -21,30 +22,9 @@ public class Goblin extends Enemy {
 
         goblinAsset = Assets.instance.enemyAsset01;
         runningRight = true;
+        velocity = new Vector2(.8f, -2);
 
-        setBounds(getX(), getY(), 16 / Constants.PPM, 16 / Constants.PPM);
-
-    }
-
-    public void defineEnemy() {
-        BodyDef bdef = new BodyDef();
-        bdef.position.set(getX(), getY());
-        bdef.type = BodyDef.BodyType.DynamicBody;
-
-        b2body = world.createBody(bdef);
-
-        FixtureDef fdef = new FixtureDef();
-        CircleShape shape = new CircleShape();
-        shape.setRadius(5 / Constants.PPM);
-
-        fdef.filter.categoryBits = Constants.ENEMY_BIT; // collision bit
-        fdef.filter.maskBits = Constants.GROUND_BIT |
-                Constants.BORDER_BIT |
-                Constants.CHEST_BIT |
-                Constants.PLAYER_BIT; // compatible collision bits
-
-        fdef.shape = shape;
-        b2body.createFixture(fdef).setUserData(this);
+        setBounds(getX(), getY(), 24 / Constants.PPM, 28 / Constants.PPM);
 
     }
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="240" height="13" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="42">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="240" height="13" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="44">
  <tileset firstgid="1" name="tileset" tilewidth="16" tileheight="16" tilecount="72" columns="12">
   <image source="../tilesets/tileset.png" width="192" height="96"/>
  </tileset>
- <tileset firstgid="73" name="chest_tileset" tilewidth="16" tileheight="16" tilecount="32" columns="32" backgroundcolor="#00000000">
-  <image source="../tilesets/chest_tileset.png" width="512" height="16"/>
+ <tileset firstgid="73" name="chest_tileset" tilewidth="16" tileheight="16" tilecount="32" columns="4" backgroundcolor="#00000000">
+  <image source="../tilesets/chest_tileset.png" width="64" height="128"/>
  </tileset>
  <layer id="1" name="graphics" width="240" height="13">
   <data encoding="base64" compression="zlib">
@@ -29,7 +29,9 @@
  <objectgroup id="7" name="goblin">
   <object id="27" x="368" y="144" width="16" height="16"/>
   <object id="28" x="528" y="144" width="16" height="16"/>
-  <object id="33" x="176" y="160" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="8" name="worm">
+  <object id="43" x="192" y="176" width="16" height="16"/>
  </objectgroup>
  <objectgroup id="6" name="chest">
   <object id="9" x="256" y="176" width="16" height="16"/>

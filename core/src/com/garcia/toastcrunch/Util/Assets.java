@@ -18,6 +18,7 @@ public class Assets implements Disposable, AssetErrorListener {
 //    public AssetMusic music;
     public PlayerAsset playerAsset;
     public EnemyAsset_01 enemyAsset01;
+    public EnemyAsset_02 enemyAsset02;
     public ChestAsset chestAsset;
     private AssetManager assetManager;
 
@@ -40,12 +41,17 @@ public class Assets implements Disposable, AssetErrorListener {
         assetManager.load("sprites/player/Knight/run.png", Texture.class);
         assetManager.load("sprites/player/Knight/useShield.png", Texture.class);
 
+        assetManager.load("sprites/player/Bandit/Bandit.png", Texture.class); // bandit spritesheet
+
+        assetManager.load("sprites/player/Adventurer/spritesheet.png", Texture.class); // adventurer spritesheet
+
 
         // enemies
-        assetManager.load("sprites/enemies/goblin_spritesheet.png", Texture.class); // goblin tilesheet
+        assetManager.load("sprites/enemies/goblin_spritesheet.png", Texture.class); // goblin spritesheet
+        assetManager.load("sprites/enemies/worm/worm_spritesheet.png", Texture.class); // worm spritesheet
 
         // objects
-        assetManager.load("tilemap/tilesets/chest_tileset.png", Texture.class); // chest tilesheet
+        assetManager.load("tilemap/tilesets/chest_tileset.png", Texture.class); // chest spritesheet
 
         // start loading assets and wait until finished
         assetManager.finishLoading();
@@ -66,6 +72,7 @@ public class Assets implements Disposable, AssetErrorListener {
 //        music = new AssetMusic(assetManager);
         playerAsset = new PlayerAsset(assetManager);
         enemyAsset01 = new EnemyAsset_01(assetManager);
+        enemyAsset02 = new EnemyAsset_02(assetManager);
         chestAsset = new ChestAsset(assetManager);
     }
 
@@ -134,79 +141,174 @@ public class Assets implements Disposable, AssetErrorListener {
         }
     }
 
+    public class EnemyAsset_02 {
+        public final Texture texture;
 
-    public class PlayerAsset {
-        public final Texture idleTexture;
-        public final Texture attackTexture;
-        public final Texture jumpAndFallTexture;
-        public final Texture runTexture;
+        //
+        public final Animation<TextureRegion> enemyIdle;
+        public final Animation<TextureRegion> enemyHit;
+        public final Animation<TextureRegion> attackLeft;
+        public final Animation<TextureRegion> attackRight;
 
-
-        public final Animation<TextureRegion> playerIdle;
-        public final Animation<TextureRegion> playerWalk;
-        public final Animation<TextureRegion> playerJump;
-        public final Animation<TextureRegion> playerFall;
-        public final Animation<TextureRegion> playerAttack1;
-        public final Animation<TextureRegion> playerAttack2;
-//        public final Animation<TextureRegion> playerAttack3;
-
-        public PlayerAsset(AssetManager manager) {
-            attackTexture = assetManager.get("sprites/player/Knight/attack.png");
-//            texture = assetManager.get("sprites/player/Knight/death.png");
-            idleTexture = assetManager.get("sprites/player/Knight/idle.png");
-            jumpAndFallTexture = assetManager.get("sprites/player/Knight/jumpAndfall.png");
-//            texture = assetManager.get("sprites/player/Knight/rolling.png");
-            runTexture = assetManager.get("sprites/player/Knight/run.png");
-//            texture = assetManager.get("sprites/player/Knight/useShield.png");
+        public EnemyAsset_02(AssetManager manager) {
+            texture = assetManager.get("sprites/enemies/worm/worm_spritesheet.png");
             Array<TextureRegion> frames = new Array<>();
 
             // idle animation
-            for (int i = 0; i < 15; i++)
-                frames.add(new TextureRegion(idleTexture, i * 64, 0, 64, 64));
-            playerIdle = new Animation<TextureRegion>(.08f, frames);
+            for (int i = 0; i < 8; i++)
+                frames.add(new TextureRegion(texture, 1216 + (i * 64), 0, 64, 64));
+            enemyIdle = new Animation<TextureRegion>(.1f, frames);
+            frames.clear();
+
+            // attack left animation
+            for (int i = 0; i < 8; i++)
+                frames.add(new TextureRegion(texture, i * 64, 0, 64, 64));
+            attackLeft = new Animation<TextureRegion>(0.1f, frames);
+            frames.clear();
+
+            // attack right animation
+            for (int i = 0; i < 8; i++)
+                frames.add(new TextureRegion(texture, 512 + (i * 64), 0, 64, 64));
+            attackRight = new Animation<TextureRegion>(0.1f, frames);
+            frames.clear();
+
+            // hit animation
+            for (int i = 0; i < 3; i++)
+                frames.add(new TextureRegion(texture, 1024 + (i * 64), 0, 64, 64));
+            enemyHit = new Animation<TextureRegion>(0.1f, frames);
+            frames.clear();
+
+        }
+    }
+
+
+    public class PlayerAsset {
+        public final Texture texture; // sprite texture
+
+        public final Animation<TextureRegion> playerIdle01;
+        public final Animation<TextureRegion> playerWalk;
+        public final Animation<TextureRegion> playerJump01;
+        public final Animation<TextureRegion> playerJump02;
+        public final Animation<TextureRegion> playerFall;
+        public final Animation<TextureRegion> playerAttack1;
+        public final Animation<TextureRegion> playerAttack2;
+        public final Animation<TextureRegion> playerAttack3;
+        public final Animation<TextureRegion> playerDuck;
+
+        public PlayerAsset(AssetManager manager) {
+            texture = assetManager.get("sprites/player/Adventurer/spritesheet.png");
+            Array<TextureRegion> frames = new Array<>();
+
+            // idle animation
+            for (int i = 0; i < 4; i++)
+                frames.add(new TextureRegion(texture, i * 50, 0, 50, 37));
+            playerIdle01 = new Animation<TextureRegion>(.15f, frames);
             frames.clear();
 
             // walking animation
-            for (int i = 0; i < 8; i++)
-                frames.add(new TextureRegion(runTexture, i * 96, 0, 96, 64));
-            playerWalk = new Animation<TextureRegion>(.05f, frames);
+            for (int i = 0; i < 6; i++)
+                frames.add(new TextureRegion(texture, 50 + ( i * 50), 37, 50, 37));
+            playerWalk = new Animation<TextureRegion>(.09f, frames);
             frames.clear();
 
             // jumping animation
-            for (int i = 0; i < 7; i++)
-                frames.add(new TextureRegion(jumpAndFallTexture, i * 96, 0, 96, 64));
-            playerJump = new Animation<TextureRegion>(0.005f, frames);
+            for (int i = 0; i < 4; i++)
+                frames.add(new TextureRegion(texture, i * 50, 74, 50, 37));
+            playerJump01 = new Animation<TextureRegion>(.05f, frames);
+            frames.clear();
+
+            // jump 02
+            for (int i = 0; i < 3; i++)
+                frames.add(new TextureRegion(texture, 150 + (i * 50), 74, 50, 37));
+            frames.add(new TextureRegion(texture, 0, 111, 50, 37));
+            playerJump02 = new Animation<TextureRegion>(.08f, frames);
             frames.clear();
 
             // falling animation
-            for (int i = 0; i < 7; i++)
-                frames.add(new TextureRegion(jumpAndFallTexture, 1080 + (i * 96), 0, 96, 64));
-            playerFall = new Animation<TextureRegion>(0.01f, frames);
+            for (int i = 0; i < 2; i++)
+                frames.add(new TextureRegion(texture, 50 + (i * 50), 111, 50, 37));
+            playerFall = new Animation<TextureRegion>(.1f, frames);
             frames.clear();
 
+
             // attack animation 1
-            for (int i = 0; i < 10; i++)
-                frames.add(new TextureRegion(attackTexture, i * 96, 0, 96, 64));
-            playerAttack1 = new Animation<TextureRegion>(0.005f, frames);
+            for (int i = 0; i < 5; i++)
+                frames.add(new TextureRegion(texture, i * 50, 222, 50, 37));
+            playerAttack2 = new Animation<TextureRegion>(0.1f, frames);
             frames.clear();
 
             // attack animation 2
-            for (int i = 0; i < 6; i++)
-                frames.add(new TextureRegion(attackTexture, 960 + (i * 96), 0, 96, 64));
-            playerAttack2 = new Animation<TextureRegion>(0.01f, frames);
+            for (int i = 0; i < 2; i++)
+                frames.add(new TextureRegion(texture, 250 + (i * 50), 222, 50, 37));
+            for (int i = 0; i < 4; i++)
+                frames.add(new TextureRegion(texture, i * 50, 259, 50, 37));
+            playerAttack1 = new Animation<TextureRegion>(0.1f, frames);
             frames.clear();
 
-//            // attack animation 1
-//            for (int i = 0; i < 10; i++)
-//                frames.add(new TextureRegion(attackTexture, i * 96, 0, 96, 64));
-//            playerAttack3 = new Animation<TextureRegion>(0.005f, frames);
-//            frames.clear();
+            // attack animation 3
+            frames.add(new TextureRegion(texture,  300, 259, 50, 37));
+            for (int i = 0; i < 3; i++)
+                frames.add(new TextureRegion(texture, i * 50, 296, 50, 37));
+            playerAttack3 = new Animation<TextureRegion>(0.1f, frames);
+            frames.clear();
+
+            // duck animation
+            for (int i = 0; i < 3; i++)
+                frames.add(new TextureRegion(texture, 200+(i * 50), 0, 50, 37));
+            frames.add(new TextureRegion(texture, 0, 74, 50, 37));
+            playerDuck = new Animation<TextureRegion>(0.1f, frames);
+            frames.clear();
 
 
         }
     }
 }
 
+
+// knight
+//            attackTexture = assetManager.get("sprites/player/Knight/attack.png");
+////            texture = assetManager.get("sprites/player/Knight/death.png");
+//            idleTexture = assetManager.get("sprites/player/Knight/idle.png");
+//            jumpAndFallTexture = assetManager.get("sprites/player/Knight/jumpAndfall.png");
+////            texture = assetManager.get("sprites/player/Knight/rolling.png");
+//            runTexture = assetManager.get("sprites/player/Knight/run.png");
+//            texture = assetManager.get("sprites/player/Knight/useShield.png");
+
+////        idle animation
+//            for (int i = 0; i < 15; i++)
+//        frames.add(new TextureRegion(idleTexture, i * 64, 0, 64, 64));
+//        playerIdle = new Animation<TextureRegion>(.08f, frames);
+//        frames.clear();
+//
+//        // walking animation
+//        for (int i = 0; i < 8; i++)
+//        frames.add(new TextureRegion(runTexture, i * 96, 0, 96, 64));
+//        playerWalk = new Animation<TextureRegion>(.05f, frames);
+//        frames.clear();
+//
+//        // jumping animation
+//        for (int i = 0; i < 7; i++)
+//        frames.add(new TextureRegion(jumpAndFallTexture, i * 96, 0, 96, 64));
+//        playerJump = new Animation<TextureRegion>(0.005f, frames);
+//        frames.clear();
+//
+//        // falling animation
+//        for (int i = 0; i < 7; i++)
+//        frames.add(new TextureRegion(jumpAndFallTexture, 1080 + (i * 96), 0, 96, 64));
+//        playerFall = new Animation<TextureRegion>(0.01f, frames);
+//        frames.clear();
+//
+//        // attack animation 1
+//        for (int i = 0; i < 10; i++)
+//        frames.add(new TextureRegion(attackTexture, i * 96, 0, 96, 64));
+//        playerAttack1 = new Animation<TextureRegion>(0.005f, frames);
+//        frames.clear();
+//
+//        // attack animation 2
+//        for (int i = 0; i < 6; i++)
+//        frames.add(new TextureRegion(attackTexture, 960 + (i * 96), 0, 96, 64));
+//        playerAttack2 = new Animation<TextureRegion>(0.01f, frames);
+//        frames.clear();
 
 
 //    // fonts
